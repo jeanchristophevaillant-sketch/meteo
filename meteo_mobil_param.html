@@ -168,7 +168,7 @@
         }
 
         function showTab(t) { 
-            ['forecast', 'settings', 'mapTab'].forEach(id => document.getElementById(id).classList.add('hidden'));
+            ['forecast', 'settings', 'mapTab','help'].forEach(id => document.getElementById(id).classList.add('hidden'));
             document.getElementById(t).classList.remove('hidden');
             if (t === 'settings') renderSettings();
             if (t === 'mapTab') setTimeout(() => initMap(), 200);
