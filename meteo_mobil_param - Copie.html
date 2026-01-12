@@ -3,20 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Météo Wind Surf Pro Mobile</title>
+    <title>La météo de vos spots</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#007bff">
+    <script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+    }
+    </script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
-        :root { --blue: #007bff; --low: #d4edda; --med: #fff3cd; --high: #f8d7da; }
+        :root { --blue: #007bff; --low: #d4edda; --med: #fff3cd; --high: #f8d7da;--vhigh: #e0b0ff; }
+
         body { font-family: system-ui, sans-serif; background: #f0f2f5; margin: 0; padding: 10px; overflow-x: hidden; }
         .content { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-top: 10px; width: 100%; box-sizing: border-box; }
-        .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; }
+        .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; margin-bottom: 20px; }
         table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 10px; min-width: 850px; }
 		.param-cell { display: flex; flex-direction: column; gap: 4px; align-items: center; }
         th, td { border: 1px solid #eee; padding: 6px; text-align: center; }
         th:first-child, td:first-child { position: sticky; left: 0; z-index: 10; background: #fff; width: 80px; border-right: 2px solid #ddd; font-weight: bold; }
-        .low { background: var(--low) !important; } .med { background: var(--med) !important; } .high { background: var(--high) !important; }
+        .low { background: var(--low) !important; } .med { background: var(--med) !important; } .high { background: var(--high) !important; } .vhigh { background: var(--vhigh) !important; }
         .draggable { background: #f9f9f9; padding: 10px; margin: 5px 0; border-radius: 8px; display: flex; align-items: center; gap: 8px; }
         .drag-handle { cursor: move; padding: 5px 10px; background: #eee; border-radius: 4px; }
         .btn { padding: 12px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; width: 100%; margin: 5px 0; font-size: 14px; }
@@ -24,6 +32,8 @@
         .hidden { display: none; }
         #map { height: 400px; border-radius: 8px; margin-top: 10px; }
         hr { border: 0; border-top: 1px solid #eee; margin: 20px 0; }
+        .settings-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -31,6 +41,7 @@
         <button class="btn btn-blue" style="flex:1" onclick="showTab('forecast')">📊 Météo</button>
         <button class="btn" style="flex:1; background:#28a745; color:white;" onclick="showTab('mapTab')">🗺️ Carte</button>
         <button class="btn" style="flex:1; background:#6c757d; color:white;" onclick="showTab('settings')">⚙️ Paramètres</button>
+        <button class="btn" style="flex:1; background:#17a2b8; color:white;" onclick="showTab('help')">❓ Aide</button>
     </div>
 
     <div id="forecast" class="content"><div id="tableContainer">Chargement...</div></div>
@@ -42,14 +53,59 @@
         <hr>
         <h3>🛠️ Affichage & Ordre</h3>
         <div id="sortableParams"></div>
+        <hr>
+        <div class="settings-group">
+            <label for="daysCount">📅 Nombre de jours (max 12) :</label>
+            <input type="number" id="daysCount" min="1" max="12" style="padding: 8px; width: 60px; border-radius: 4px; border: 1px solid #ccc;">
+        </div>
         <button class="btn btn-blue" onclick="save()">💾 Enregistrer</button>
         <button class="btn" onclick="resetAll()" style="background:#dc3545; color:white;">🔄 Reset</button>
     </div>
+    <div id="help" class="content hidden">
+    <h3>❓ Aide & Fonctionnement</h3>
+    <p>Cette application affiche les prévisions météo et marines pour vos spots de glisse.</p>
+    <p>Elle s'installe sur les systèmes Android comme une application web (PWA).</p>
+    <p>Son intérêt consiste à pouvoir comparer rapidement sur une page les conditions météo entre plusieurs spots de glisse et de choisir les informations qui sont importantes pour vous.
+    <br>Les codes couleurs indiquent la force du vent en rafales :</p>
+    <ul>
+        <li><strong style="color:green;">Vert</strong> : faible (moins de 15 nœuds)</li>
+        <li><strong style="color:orange;">Orange</strong> : modéré (15 à 25 nœuds)</li>
+        <li><strong style="color:red;">Rouge</strong> : fort (25 à 34 nœuds)</li>
+        <li><strong style="color:purple;">Violet</strong> : très fort (35 nœuds et plus)</li>
+    </ul>
+    
+    <ul>
+        <li><strong>Météo :</strong> Visualisez le vent (rafales), la température et les vagues.</li>
+        <li><strong>Carte :</strong> Cliquez sur la carte pour ajouter un nouveau spot instantanément.
+            Les coordonnées de l'endroit cliqué seront rajoutées à votre liste de spots.
+            Il suffit ensuite de retourner dans les paramètres pour renommer le spot que vous venez d'ajouter.
+            N'oubliez pas de sauvegarder vos modifications en cliquant sur "Enregistrer".
+        </li>
+        <li><strong>Paramètres :</strong> 
+            <ul>
+                <li>Réorganisez les spots et paramètres par glisser-déposer.
+                    Utilisez la carte pour ajouter rapidement de nouveaux spots.
+                </li>
+                <li>Activez/désactivez les données (UV, Ressenti, Période de vagues).
+                    Vous pouvez aussi choisir l'ordre d'affichage des paramètres.
+                </li>
+                <li>Ajustez la durée des prévisions (jusqu'à 12 jours)
+                </li>
+                <li>Attention à toujours cliquer sur "Enregistrer" pour que vos modifications soient prises en compte.
+                </li>
+                <li>Appuyer sur "Reset" pour réinitialiser l'application et effacer toutes vos données sauvegardées.
+                    Les spots par défaut seront alors restaurés (ceux entre Agde et Canet en Roussillon).
+                </li>
+                
+            </ul>
+        </li>
+    </ul>
+</div>
 
     <script>
         let map, markersGroup;
         let clickCount = 1;
-        const defaultLocs = [{ name: "Cap d'Agde", lat: 43.2743, lon: 3.5002 }, { name: "Gruissan", lat: 43.0917, lon: 3.1067 }, { name: "La Franqui", lat: 42.9322, lon: 3.0385 }, { name: "P. Nouvelle", lat: 43.0315, lon: 3.0679 }, { name: "Leucate", lat: 42.8975, lon: 3.0528 }, { name: "Le Barcarès", lat: 42.8006, lon: 3.0390 }, { name: "Ste-Marie", lat: 42.7271, lon: 3.0389 }, { name: "Canet", lat: 42.6612, lon: 3.0336 }];
+        const defaultLocs = [{ name: "Cap d'Agde", lat: 43.2743, lon: 3.5002 }, { name: "Gruissan", lat: 43.0917, lon: 3.1067 }, { name: "P. Nouvelle", lat: 43.0315, lon: 3.0679 }, { name: "La Franqui", lat: 42.9322, lon: 3.0385 }, { name: "Leucate", lat: 42.8975, lon: 3.0528 }, { name: "Le Barcarès", lat: 42.8006, lon: 3.0390 }, { name: "Ste-Marie", lat: 42.7271, lon: 3.0389 }, { name: "Canet", lat: 42.6612, lon: 3.0336 }];
         
         const defaultParams = [
             { id: 'temp', label: 'Température', active: true },
@@ -65,27 +121,40 @@
 
         let locs = JSON.parse(localStorage.getItem('wind_locs')) || defaultLocs;
         let savedParams = JSON.parse(localStorage.getItem('wind_params')) || [];
+        let forecastDays = parseInt(localStorage.getItem('wind_days')) || 3;
         let activeParams = defaultParams.map(defP => {
             const saved = savedParams.find(sP => sP.id === defP.id);
             return saved ? saved : defP;
         });
 
-        const getColor = (s) => s < 15 ? 'low' : (s < 25 ? 'med' : 'high');
+        const getColor = (s) => {
+            if (s < 15) return 'low';
+            if (s < 25) return 'med';
+            if (s < 35) return 'high';
+            return 'vhigh';
+        };
+        function getDayTitle(dayIndex) {
+            const date = new Date();
+            date.setDate(date.getDate() + dayIndex);
+            if (dayIndex === 0) return "Aujourd'hui";
+            if (dayIndex === 1) return "Demain";
+            return date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric' });
+        }
 
         async function load() {
             const container = document.getElementById('tableContainer');
             if(!container) return;
             container.innerHTML = "Mise à jour...";
             let html = "";
-            for (let d = 0; d < 3; d++) {
-                html += `<h3>📅 ${["Aujourd'hui","Demain","J+2"][d]}</h3><div class="table-wrapper"><table><tr><th>Lieu</th>`;
+            for (let d = 0; d < forecastDays; d++) {
+                html += `<h3>📅 ${getDayTitle(d)}</h3><div class="table-wrapper"><table><tr><th>Lieu</th>`;
                 for(let h=8; h<=20; h++) html += `<th>${h}h</th>`;
                 html += '</tr>';
                 for (let l of locs) {
                     try {
                         const [resM, resW] = await Promise.all([
-                            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${l.lat}&longitude=${l.lon}&hourly=temperature_2m,apparent_temperature,uv_index,precipitation,cloud_cover,wind_speed_10m,wind_gusts_10m,wind_direction_10m&wind_speed_unit=kn&forecast_days=3`),
-                            fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${l.lat}&longitude=${l.lon}&hourly=wave_height,wave_period,wave_direction&forecast_days=3`)
+                            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${l.lat}&longitude=${l.lon}&hourly=temperature_2m,apparent_temperature,uv_index,precipitation,cloud_cover,wind_speed_10m,wind_gusts_10m,wind_direction_10m&wind_speed_unit=kn&forecast_days=${forecastDays}`),
+                            fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${l.lat}&longitude=${l.lon}&hourly=wave_height,wave_period,wave_direction&forecast_days=${forecastDays}`)
                         ]);
                         const data = await resM.json();
                         const wData = await resW.json();
@@ -120,7 +189,7 @@
         }
 
         function showTab(t) { 
-            ['forecast', 'settings', 'mapTab'].forEach(id => document.getElementById(id).classList.add('hidden'));
+            ['forecast', 'settings', 'mapTab','help'].forEach(id => document.getElementById(id).classList.add('hidden'));
             document.getElementById(t).classList.remove('hidden');
             if (t === 'settings') renderSettings();
             if (t === 'mapTab') setTimeout(() => initMap(), 200);
@@ -131,9 +200,7 @@
 				map = L.map('map').setView([43.1, 3.1], 8);
 				L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
                 markersGroup = L.layerGroup().addTo(map);
-                
                 refreshMarkers();
-
 				map.on('click', function(e) {
 					const newName = `A renommer ${clickCount++}`;
 					const newLoc = { name: newName, lat: parseFloat(e.latlng.lat.toFixed(4)), lon: parseFloat(e.latlng.lng.toFixed(4)) };
@@ -141,9 +208,7 @@
 					refreshMarkers();
                     L.popup().setLatLng(e.latlng).setContent(newName).openOn(map);
 				});
-			} else {
-                refreshMarkers();
-            }
+			} else { refreshMarkers(); }
 		}
 
         function refreshMarkers() {
@@ -157,6 +222,7 @@
         }
 
         function renderSettings() {
+            document.getElementById('daysCount').value = forecastDays;
             document.getElementById('sortableLocs').innerHTML = locs.map((l, i) => `
                 <div class="draggable loc-item">
                     <span class="drag-handle">☰</span>
@@ -173,14 +239,26 @@
                     <span class="param-label" style="flex:1">${p.label}</span>
                 </div>`).join('');
 
-            new Sortable(document.getElementById('sortableLocs'), { handle: '.drag-handle', animation: 150 });
-            new Sortable(document.getElementById('sortableParams'), { handle: '.drag-handle', animation: 150 });
+            const sortOptions = { 
+                handle: '.drag-handle', 
+                animation: 150,
+                delay: 100, // Temps de pression avant le début du drag (en ms)
+                delayOnTouchOnly: true, // Applique le délai uniquement sur mobile
+                touchStartThreshold: 5 // Sensibilité au mouvement avant d'annuler le drag
+            };
+
+            new Sortable(document.getElementById('sortableLocs'), sortOptions);
+            new Sortable(document.getElementById('sortableParams'), sortOptions);
         }
 
         function addLoc() { locs.push({name:"", lat:0, lon:0}); renderSettings(); }
         function removeLoc(i) { locs.splice(i, 1); renderSettings(); }
 
         function save() { 
+            let dInput = parseInt(document.getElementById('daysCount').value);
+            forecastDays = Math.min(Math.max(dInput, 1), 12);
+            localStorage.setItem('wind_days', forecastDays);
+
             const locElems = document.querySelectorAll('.loc-item');
             locs = Array.from(locElems).map(el => ({
                 name: el.querySelector('.name-in').value,
