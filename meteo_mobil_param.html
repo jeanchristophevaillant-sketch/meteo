@@ -233,8 +233,16 @@
                     <span class="param-label" style="flex:1">${p.label}</span>
                 </div>`).join('');
 
-            new Sortable(document.getElementById('sortableLocs'), { handle: '.drag-handle', animation: 150 });
-            new Sortable(document.getElementById('sortableParams'), { handle: '.drag-handle', animation: 150 });
+            const sortOptions = { 
+                handle: '.drag-handle', 
+                animation: 150,
+                delay: 100, // Temps de pression avant le début du drag (en ms)
+                delayOnTouchOnly: true, // Applique le délai uniquement sur mobile
+                touchStartThreshold: 5 // Sensibilité au mouvement avant d'annuler le drag
+            };
+
+            new Sortable(document.getElementById('sortableLocs'), sortOptions);
+            new Sortable(document.getElementById('sortableParams'), sortOptions);
         }
 
         function addLoc() { locs.push({name:"", lat:0, lon:0}); renderSettings(); }
