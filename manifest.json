@@ -1,0 +1,9 @@
+{
+  "name": "Wheather Spots",
+  "short_name": "WheatherSpots",
+  "start_url": "meteo_mobil_param.html",
+  "display": "standalone",
+  "background_color": "#f0f2f5",
+  "theme_color": "#007bff",
+  "icons": [{ "src": "icon.png", "sizes": "512x512", "type": "image/png" }]
+}
