@@ -3,10 +3,10 @@ const CACHE_NAME = 'meteo-cache-v2.2'; // Changez v1 en v2 ici
 // Liste des fichiers à mettre en cache
 const ASSETS = [
     './',
-    './index.html',
+    './meteo_mobil_param.html',
     './manifest.json',
     './icon.png',
-    ];
+];
 
 // Lors de l'installation, on force le nouveau SW à prendre le contrôle
 self.addEventListener('install', (event) => {
