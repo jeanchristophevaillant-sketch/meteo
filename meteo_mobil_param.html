@@ -90,13 +90,45 @@
     
     <div id="help" class="content hidden">
         <h3>❓ Aide & Fonctionnement</h3>
-        <p>Cette application affiche les prévisions météo et marines pour vos spots de glisse.</p>
-        <ul>
-            <li><strong>Regroupement :</strong> Dans l'onglet Météo, choisissez "Par Jour" pour voir tous les spots côte à côte chaque jour, ou "Par Lieu" pour voir l'évolution d'un spot sur plusieurs jours dans un seul tableau.</li>
-            <li><strong>Couleurs Vent :</strong> Vert (<15nd), Orange (15-25nd), Rouge (25-35nd), Violet (>35nd).</li>
-            <li><strong>Carte :</strong> Cliquez sur la carte pour ajouter un spot. Renommez-le ensuite dans Paramètres.</li>
-        </ul>
-    </div>
+    <p>Cette application affiche les prévisions météo et marines pour vos spots de glisse.</p>
+    <p>Elle s'installe sur les systèmes Android comme une application web (PWA).</p>
+    <p>Son intérêt consiste à pouvoir comparer rapidement sur une page les conditions météo entre plusieurs spots de glisse et de choisir les informations qui sont importantes pour vous.
+    <br>Les codes couleurs indiquent la force du vent en rafales :</p>
+    <ul>
+        <li><strong style="color:green;">Vert</strong> : faible (moins de 15 nœuds)</li>
+        <li><strong style="color:orange;">Orange</strong> : modéré (15 à 25 nœuds)</li>
+        <li><strong style="color:red;">Rouge</strong> : fort (25 à 34 nœuds)</li>
+        <li><strong style="color:purple;">Violet</strong> : très fort (35 nœuds et plus)</li>
+    </ul>
+    
+    <ul>
+        <li><strong>Météo :</strong> Visualisez le vent (rafales), la température et les vagues.</li>
+        <li><strong>Carte :</strong> Cliquez sur la carte pour ajouter un nouveau spot instantanément.
+            Les coordonnées de l'endroit cliqué seront rajoutées à votre liste de spots.
+            Il suffit ensuite de retourner dans les paramètres pour renommer le spot que vous venez d'ajouter.
+            N'oubliez pas de sauvegarder vos modifications en cliquant sur "Enregistrer".
+        </li>
+        <li><strong>Paramètres :</strong> 
+            <ul>
+                <li></li>
+                <li>Réorganisez les spots et paramètres par glisser-déposer.
+                    Utilisez la carte pour ajouter rapidement de nouveaux spots.
+                </li>
+                <li>Activez/désactivez les données (UV, Ressenti, Période de vagues).
+                    Vous pouvez aussi choisir l'ordre d'affichage des paramètres.
+                </li>
+                <li>Ajustez la durée des prévisions (jusqu'à 12 jours)
+                </li>
+                <li>Attention à toujours cliquer sur "Enregistrer" pour que vos modifications soient prises en compte.
+                </li>
+                <li>Appuyer sur "Reset" pour réinitialiser l'application et effacer toutes vos données sauvegardées.
+                    Les spots par défaut seront alors restaurés (ceux entre Agde et Canet en Roussillon).
+                </li>
+                
+            </ul>
+        </li>
+    </ul>
+</div>
 
     <script>
         let map, markersGroup;
