@@ -706,6 +706,8 @@
                     }
                     html += '</table></div>';
                 }
+                document.getElementById('viewDay').classList.toggle('active', viewMode === 'day');
+                document.getElementById('viewLoc').classList.remove('active', viewMode === 'loc');
             } else {
                 for (let l of visibleLocs) {
                     const dL = allData[l.name];
@@ -722,6 +724,8 @@
                     }
                     html += '</table></div>';
                 }
+                document.getElementById('viewDay').classList.remove('active', viewMode === 'day');
+                document.getElementById('viewLoc').classList.toggle('active', viewMode === 'loc');
             }
             container.innerHTML = html;
         }
