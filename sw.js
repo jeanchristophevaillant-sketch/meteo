@@ -2,7 +2,6 @@
 const CACHE_NAME = 'meteo-cache-v2.2'; // Changez v1 en v2 ici
 // Liste des fichiers à mettre en cache
 const ASSETS = [
-    './',
     './meteo_mobil_param.html',
     './manifest.json',
     './icon.png',
