@@ -1,11 +1,12 @@
 // sw.js
-const CACHE_NAME = 'meteo-cache-v2'; // Changez v1 en v2 ici
+const CACHE_NAME = 'meteo-cache-v2.2'; // Changez v1 en v2 ici
+// Liste des fichiers à mettre en cache
 const ASSETS = [
     './',
     './index.html',
     './manifest.json',
-    // ... autres fichiers
-];
+    './icon.png',
+    ];
 
 // Lors de l'installation, on force le nouveau SW à prendre le contrôle
 self.addEventListener('install', (event) => {

@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#007bff">
     <script>
     if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js?v=2.2').then(reg => {
+    navigator.serviceWorker.register('sw.js?v=2.1').then(reg => {
         reg.onupdatefound = () => {
             const installingWorker = reg.installing;
             installingWorker.onstatechange = () => {
@@ -189,9 +189,6 @@
         }
 
         function renderCell(data, wData, index) {
-            const svgIcon = "data:image/svg+xml;charset=utf-8,%3Csvg height='16' width='16' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23121212'%3E%3Cpath d='M2.833 1L8 4.333 13.167 1 8 16z' stroke='%23fff' stroke-width='2'/%3E%3Cpath d='M2.833 1L8 4.333 13.167 1 8 16z'/%3E%3C/g%3E%3C/svg%3E";
-            const svgIconWave = "data:image/svg+xml;charset=utf-8,%3Csvg height='16' width='16' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23007bff'%3E%3Cpath d='M2.833 1L8 4.333 13.167 1 8 16z' stroke='%23fff' stroke-width='2'/%3E%3Cpath d='M2.833 1L8 4.333 13.167 1 8 16z'/%3E%3C/g%3E%3C/svg%3E";
-            
             const g = Math.round(data.wind_gusts_10m[index]);
             let html = `<td class="${getColor(g)}"><div class="param-cell">`;
             activeParams.forEach(p => {
@@ -205,10 +202,10 @@
                     html += `<span style="font-size:1.4em">${ico}</span>`;
                 }
                 if(p.id === 'wind') html += `<span style="font-size:1.6em"><b>${Math.round(data.wind_speed_10m[index])}</b> <small>(${g})</small></span>`;
-                if(p.id === 'dir') html += `<div style="transform:rotate(${data.wind_direction_10m[index]}deg)"><img src="${svgIcon}" width="20"></div>`;
+                if(p.id === 'dir') html += `<div style="transform:rotate(${data.wind_direction_10m[index] + 180}deg); font-size:1.8em;">↑</div>`;
                 if(p.id === 'wave') html += `<span style="font-size:0.8em">🌊 ${wData.wave_height ? wData.wave_height[index] : '?'}m</span>`;
                 if(p.id === 'wave_per') html += `<span style="font-size:0.8em">⏱️ ${wData.wave_period ? wData.wave_period[index] : '?'}s</span>`;
-                if(p.id === 'wave_dir') html += `<div style="transform:rotate(${wData.wave_direction[index]}deg);color:blue;"><img src="${svgIconWave}" width="12"></div>`;
+                if(p.id === 'wave_dir') html += `<div style="transform:rotate(${wData.wave_direction[index] + 180}deg); font-size:1.1em; color:blue;">↑</div>`;
             });
             html += `</div></td>`;
             return html;
