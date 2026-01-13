@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#ffffff">
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js?v=2.4').then(reg => {
+            navigator.serviceWorker.register('sw.js?v=2.5').then(reg => {
                 reg.onupdatefound = () => {
                     const installingWorker = reg.installing;
                     installingWorker.onstatechange = () => {
