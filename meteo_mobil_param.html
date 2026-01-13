@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#ffffff">
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js?v=2.5').then(reg => {
+            navigator.serviceWorker.register('sw.js?v=2.4').then(reg => {
                 reg.onupdatefound = () => {
                     const installingWorker = reg.installing;
                     installingWorker.onstatechange = () => {
@@ -218,9 +218,11 @@
         td {
             padding: 10px 8px;
             text-align: center;
-            border-bottom: 1px solid #D1D1D6;
+            border-bottom: 2px solid #D1D1D6;
             /* Thinner gray line */
             border-right: 1px dashed var(--border);
+            white-space: nowrap;
+            /* Prevent wrapping to fix vertical misalignment */
         }
 
         th {
@@ -617,38 +619,60 @@
             activeParams.forEach(p => {
                 if (!p.active) return;
 
-                if (p.id === 'temp' && isValid(data.temperature_2m[index]))
-                    html += `<span style="color:var(--text-sub); font-size:0.9em;">🌡️${Math.round(data.temperature_2m[index])}°</span>`;
-
-                if (p.id === 'app_temp' && isValid(data.apparent_temperature[index]))
-                    html += `<span style="color:#999; font-size:0.75em;">(Ress. ${Math.round(data.apparent_temperature[index])}°)</span>`;
-
-                if (p.id === 'uv' && isValid(data.uv_index[index]))
-                    html += `<span style="color:#FF9500; font-weight:700; font-size:0.75em;">UV ${data.uv_index[index]}</span>`;
-
-                if (p.id === 'ico' && isValid(data.cloud_cover[index]) && isValid(data.precipitation[index])) {
-                    let ico = data.cloud_cover[index] < 20 ? "☀️" : (data.cloud_cover[index] < 50 ? "🌤️" : "☁️");
-                    if (data.precipitation[index] > 0.1) ico = "⛈️";
-                    html += `<span style="font-size:1.5em; margin:2px 0;">${ico}</span>`;
+                if (p.id === 'temp') {
+                    if (isValid(data.temperature_2m[index])) html += `<span style="color:var(--text-sub); font-size:0.9em;">🌡️${Math.round(data.temperature_2m[index])}°</span>`;
+                    else html += `<span style="visibility:hidden; font-size:0.9em;">&nbsp;</span>`;
                 }
 
-                if (p.id === 'wind' && isValid(data.wind_speed_10m[index])) {
-                    // Only show gust if valid
-                    const gustStr = isValid(gVal) ? ` <small style="opacity:0.7">(${Math.round(gVal)})</small>` : '';
-                    html += `<span style="font-size:1.2em"><b>${Math.round(data.wind_speed_10m[index])}</b>${gustStr}</span>`;
+                if (p.id === 'app_temp') {
+                    if (isValid(data.apparent_temperature[index])) html += `<span style="color:#999; font-size:0.75em;">(Ress. ${Math.round(data.apparent_temperature[index])}°)</span>`;
+                    else html += `<span style="visibility:hidden; font-size:0.75em;">&nbsp;</span>`;
                 }
 
-                if (p.id === 'dir' && isValid(data.wind_direction_10m[index]))
-                    html += `<div style="transform:rotate(${data.wind_direction_10m[index]}deg); margin:2px 0;"><img src="${svgIcon}" width="18" style="opacity:0.8"></div>`;
+                if (p.id === 'uv') {
+                    if (isValid(data.uv_index[index])) html += `<span style="color:#FF9500; font-weight:700; font-size:0.75em;">UV ${data.uv_index[index]}</span>`;
+                    else html += `<span style="visibility:hidden; font-size:0.75em;">&nbsp;</span>`;
+                }
 
-                if (p.id === 'wave' && wData.wave_height && isValid(wData.wave_height[index]))
-                    html += `<span style="font-size:0.85em; color:#007AFF;">🌊 ${wData.wave_height[index]}m</span>`;
+                if (p.id === 'ico') {
+                    if (isValid(data.cloud_cover[index]) && isValid(data.precipitation[index])) {
+                        let ico = data.cloud_cover[index] < 20 ? "☀️" : (data.cloud_cover[index] < 50 ? "🌤️" : "☁️");
+                        if (data.precipitation[index] > 0.1) ico = "⛈️";
+                        html += `<span style="font-size:1.5em; margin:2px 0;">${ico}</span>`;
+                    } else {
+                        html += `<span style="visibility:hidden; font-size:1.5em; margin:2px 0;">☀️</span>`;
+                    }
+                }
 
-                if (p.id === 'wave_per' && wData.wave_period && isValid(wData.wave_period[index]))
-                    html += `<span style="font-size:0.85em; color:#5856D6;">⏱️ ${wData.wave_period[index]}s</span>`;
+                if (p.id === 'wind') {
+                    if (isValid(data.wind_speed_10m[index])) {
+                        // Only show gust if valid
+                        const gustStr = isValid(gVal) ? ` <small style="opacity:0.7">(${Math.round(gVal)})</small>` : '';
+                        html += `<span style="font-size:1.2em"><b>${Math.round(data.wind_speed_10m[index])}</b>${gustStr}</span>`;
+                    } else {
+                        html += `<span style="visibility:hidden; font-size:1.2em;"><b>00</b></span>`;
+                    }
+                }
 
-                if (p.id === 'wave_dir' && wData.wave_direction && isValid(wData.wave_direction[index]))
-                    html += `<div style="transform:rotate(${wData.wave_direction[index]}deg);color:blue;"><img src="${svgIconWave}" width="12"></div>`;
+                if (p.id === 'dir') {
+                    if (isValid(data.wind_direction_10m[index])) html += `<div style="transform:rotate(${data.wind_direction_10m[index]}deg); margin:2px 0;"><img src="${svgIcon}" width="18" style="opacity:0.8"></div>`;
+                    else html += `<div style="visibility:hidden; margin:2px 0;"><img src="${svgIcon}" width="18"></div>`;
+                }
+
+                if (p.id === 'wave') {
+                    if (wData.wave_height && isValid(wData.wave_height[index])) html += `<span style="font-size:0.85em; color:#007AFF;">🌊 ${wData.wave_height[index]}m</span>`;
+                    else html += `<span style="visibility:hidden; font-size:0.85em;">&nbsp;</span>`;
+                }
+
+                if (p.id === 'wave_per') {
+                    if (wData.wave_period && isValid(wData.wave_period[index])) html += `<span style="font-size:0.85em; color:#5856D6;">⏱️ ${wData.wave_period[index]}s</span>`;
+                    else html += `<span style="visibility:hidden; font-size:0.85em;">&nbsp;</span>`;
+                }
+
+                if (p.id === 'wave_dir') {
+                    if (wData.wave_direction && isValid(wData.wave_direction[index])) html += `<div style="transform:rotate(${wData.wave_direction[index]}deg);color:blue;"><img src="${svgIconWave}" width="12"></div>`;
+                    else html += `<div style="visibility:hidden;"><img src="${svgIconWave}" width="12"></div>`;
+                }
             });
             html += `</div></td>`;
             return html;
