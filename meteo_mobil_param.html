@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#007bff">
     <script>
     if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js?v=2.3').then(reg => {
+    navigator.serviceWorker.register('sw.js?v=2.4').then(reg => {
         reg.onupdatefound = () => {
             const installingWorker = reg.installing;
             installingWorker.onstatechange = () => {
@@ -81,8 +81,8 @@
         <div id="sortableParams"></div>
         <hr>
         <div class="settings-group">
-            <label for="daysCount">📅 Nombre de jours (max 12) :</label>
-            <input type="number" id="daysCount" min="1" max="12" style="padding: 8px; width: 60px; border-radius: 4px; border: 1px solid #ccc;">
+            <label for="daysCount">📅 Nombre de jours (max 15) :</label>
+            <input type="number" id="daysCount" min="1" max="15" style="padding: 8px; width: 60px; border-radius: 4px; border: 1px solid #ccc;">
         </div>
         <button class="btn btn-blue" onclick="save()">💾 Enregistrer</button>
         <button class="btn" onclick="resetAll()" style="background:#dc3545; color:white;">🔄 Reset</button>
@@ -117,7 +117,7 @@
                 <li>Activez/désactivez les données (UV, Ressenti, Période de vagues).
                     Vous pouvez aussi choisir l'ordre d'affichage des paramètres.
                 </li>
-                <li>Ajustez la durée des prévisions (jusqu'à 12 jours)
+                <li>Ajustez la durée des prévisions (jusqu'à 15 jours)
                 </li>
                 <li>Attention à toujours cliquer sur "Enregistrer" pour que vos modifications soient prises en compte.
                 </li>
@@ -338,7 +338,7 @@
 
         function save() { 
             let dInput = parseInt(document.getElementById('daysCount').value);
-            forecastDays = Math.min(Math.max(dInput, 1), 12);
+            forecastDays = Math.min(Math.max(dInput, 1), 15);
             localStorage.setItem('wind_days', forecastDays);
 
             const locElems = document.querySelectorAll('.loc-item');
