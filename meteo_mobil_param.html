@@ -8,8 +8,22 @@
     <meta name="theme-color" content="#007bff">
     <script>
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-    }
+    navigator.serviceWorker.register('sw.js?v=2').then(reg => {
+        reg.onupdatefound = () => {
+            const installingWorker = reg.installing;
+            installingWorker.onstatechange = () => {
+                if (installingWorker.state === 'installed') {
+                    if (navigator.serviceWorker.controller) {
+                        // Une nouvelle version est disponible
+                        if (confirm("Nouvelle version disponible ! Voulez-vous mettre à jour ?")) {
+                            window.location.reload();
+                        }
+                    }
+                }
+            };
+        };
+    });
+}
     </script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
