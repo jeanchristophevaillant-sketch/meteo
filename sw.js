@@ -1,27 +1,31 @@
-// sw.js
-const CACHE_NAME = 'meteo-cache-v2.2'; // Changez v1 en v2 ici
-// Liste des fichiers à mettre en cache
-const ASSETS = [
-    './index.html',
-    './manifest.json',
-    './icon.png',
-];
+// -------------------------
+// VERSION DU SERVICE WORKER
+// -------------------------
+const VERSION = "2.7";
 
-// Lors de l'installation, on force le nouveau SW à prendre le contrôle
-self.addEventListener('install', (event) => {
-    event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
-    );
-    self.skipWaiting(); // Force l'activation immédiate
+// Install : nouvelle version détectée
+self.addEventListener("install", (event) => {
+  console.log("Service Worker installé - version", VERSION);
+  self.skipWaiting();
 });
 
-// Nettoyage des anciens caches
-self.addEventListener('activate', (event) => {
-    event.waitUntil(
-        caches.keys().then((keys) => {
-            return Promise.all(
-                keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
-            );
-        })
-    );
+// Activate : prise de contrôle immédiate
+self.addEventListener("activate", (event) => {
+  console.log("Service Worker activé - version", VERSION);
+  clients.claim();
+
+  // Notifie les pages que la version a changé
+  clients.matchAll().then(clientsList => {
+    clientsList.forEach(client => {
+      client.postMessage({
+        type: "NEW_VERSION",
+        version: VERSION
+      });
+    });
+  });
+});
+
+// Obligatoire pour valider la PWA (Chrome)
+self.addEventListener("fetch", (event) => {
+  // Pas de cache ici (minimal)
 });
