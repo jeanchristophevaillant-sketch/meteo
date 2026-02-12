@@ -1,9 +1,15 @@
 {
-  "name": "Wheather Spots",
-  "short_name": "WheatherSpots",
-  "start_url": "index.html",
+  "name": "Weather Spots",
+  "short_name": "Weather",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#f0f2f5",
   "theme_color": "#007bff",
-  "icons": [{ "src": "icon.png", "sizes": "512x512", "type": "image/png" }]
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
