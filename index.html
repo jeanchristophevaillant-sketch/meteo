@@ -103,6 +103,12 @@
             display: block;
             margin-bottom: 2px;
         }
+        .drag-handle {
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
 
         .btn-nav.active,
         .btn-nav:active {
@@ -856,8 +862,6 @@
             const sortOptions = {
                 handle: '.drag-handle',
                 animation: 150,
-                delay: 100,
-                delayOnTouchOnly: true,
                 touchStartThreshold: 5,
                 onEnd: () => unsavedChanges = true
             };
